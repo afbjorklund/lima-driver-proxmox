@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/docker/go-units v0.5.0
-	github.com/lima-vm/lima/v2 v2.0.0-20250821022355-1daec3a94e54
+	github.com/lima-vm/lima/v2 v2.0.0-alpha.0
 	github.com/luthermonson/go-proxmox v0.2.2
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
@@ -25,7 +25,7 @@ require (
 	github.com/containers/gvisor-tap-vsock v0.8.7 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
-	github.com/diskfs/go-diskfs v1.6.0 // indirect
+	github.com/diskfs/go-diskfs v1.7.0 // indirect
 	github.com/djherbis/times v1.6.0 // indirect
 	github.com/elliotchance/orderedmap v1.8.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
@@ -67,11 +67,11 @@ require (
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
-	golang.org/x/time v0.7.0 // indirect
+	golang.org/x/time v0.9.0 // indirect
 	golang.org/x/tools v0.35.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
-	google.golang.org/grpc v1.74.2 // indirect
-	google.golang.org/protobuf v1.36.7 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
+	google.golang.org/grpc v1.75.0 // indirect
+	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/op/go-logging.v1 v1.0.0-20160211212156-b2cb9fa56473 // indirect
 	gvisor.dev/gvisor v0.0.0-20240916094835-a174eb65023f // indirect
 )
