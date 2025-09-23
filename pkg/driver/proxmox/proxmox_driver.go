@@ -20,12 +20,12 @@ import (
 
 	"github.com/lima-vm/lima/v2/pkg/driver"
 	"github.com/lima-vm/lima/v2/pkg/executil"
-	"github.com/lima-vm/lima/v2/pkg/limayaml"
-	"github.com/lima-vm/lima/v2/pkg/store"
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/ptr"
 )
 
 type LimaProxmoxDriver struct {
-	Instance     *store.Instance
+	Instance     *limatype.Instance
 	SSHLocalPort int
 
 	qCmd    *exec.Cmd
@@ -44,7 +44,7 @@ func New() *LimaProxmoxDriver {
 	return &LimaProxmoxDriver{}
 }
 
-func (l *LimaProxmoxDriver) Configure(inst *store.Instance) *driver.ConfiguredDriver {
+func (l *LimaProxmoxDriver) Configure(inst *limatype.Instance) *driver.ConfiguredDriver {
 	l.Instance = inst
 	l.SSHLocalPort = inst.SSHLocalPort
 
@@ -53,12 +53,26 @@ func (l *LimaProxmoxDriver) Configure(inst *store.Instance) *driver.ConfiguredDr
 	}
 }
 
-func (l *LimaProxmoxDriver) Validate() error {
-	if *l.Instance.Config.MountType != limayaml.REVSSHFS {
+func (l *LimaProxmoxDriver) Validate(ctx context.Context) error {
+	return validateConfig(ctx, l.Instance.Config)
+}
+
+func validateConfig(ctx context.Context, cfg *limatype.LimaYAML) error {
+	if cfg == nil {
+		return errors.New("configuration is nil")
+	}
+	if *cfg.MountType != limatype.REVSSHFS {
 		return fmt.Errorf("field `mountType` must be %q for %s driver, got %q",
-			limayaml.REVSSHFS, "proxmox", *l.Instance.Config.MountType)
+			limatype.REVSSHFS, "proxmox", *cfg.MountType)
 	}
 	return nil
+}
+func (l *LimaProxmoxDriver) FillConfig(ctx context.Context, cfg *limatype.LimaYAML, filePath string) error {
+	if cfg.VMType == nil {
+		cfg.VMType = ptr.Of("proxmox")
+	}
+
+	return validateConfig(ctx, cfg)
 }
 
 func (l *LimaProxmoxDriver) Start(_ context.Context) (chan error, error) {
@@ -151,16 +165,41 @@ func logPipeRoutine(r io.Reader, header string) {
 
 func (l *LimaProxmoxDriver) Info() driver.Info {
 	var info driver.Info
+	info.Name = "proxmox"
 	if l.Instance != nil && l.Instance.Dir != "" {
 		info.InstanceDir = l.Instance.Dir
 	}
-	info.DriverName = "proxmox"
-	info.CanRunGUI = false
+
+	info.Features = driver.DriverFeatures{
+		DynamicSSHAddress:    false,
+		SkipSocketForwarding: false,
+		CanRunGUI:            false,
+	}
 	return info
+}
+
+func (l *LimaProxmoxDriver) SSHAddress(_ context.Context) (string, error) {
+	return "127.0.0.1", nil
+}
+
+func (l *LimaProxmoxDriver) InspectStatus(_ context.Context, _ *limatype.Instance) string {
+	return ""
 }
 
 func (l *LimaProxmoxDriver) Initialize(_ context.Context) error {
 	return nil
+}
+
+func (l *LimaProxmoxDriver) Create(_ context.Context) error {
+	return nil
+}
+
+func (l *LimaProxmoxDriver) Delete(_ context.Context) error {
+	return nil
+}
+
+func (l *LimaProxmoxDriver) BootScripts() (map[string][]byte, error) {
+	return nil, nil
 }
 
 func (l *LimaProxmoxDriver) CreateDisk(_ context.Context) error {

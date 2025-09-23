@@ -4,11 +4,13 @@
 package main
 
 import (
-	"github.com/lima-vm/lima/v2/pkg/driver/external/server"
+	"context"
+
 	"github.com/afbjorklund/lima-driver-proxmox/pkg/driver/proxmox"
+	"github.com/lima-vm/lima/v2/pkg/driver/external/server"
 )
 
 // To be used as an external driver for Lima.
 func main() {
-	server.Serve(proxmox.New())
+	server.Serve(context.Background(), proxmox.New())
 }
