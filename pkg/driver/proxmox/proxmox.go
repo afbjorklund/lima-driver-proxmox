@@ -4,7 +4,6 @@
 package proxmox
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,7 +13,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -128,181 +126,11 @@ func appendArgsIfNoConflict(args []string, k, v string) []string {
 	return append(args, k, v)
 }
 
-type features struct {
-	// AccelHelp is the output of `qemu-system-x86_64 -accel help`
-	// e.g. "Accelerators supported in QEMU binary:\ntcg\nhax\nhvf\n"
-	// Not machine-readable, but checking strings.Contains() should be fine.
-	AccelHelp []byte
-	// NetdevHelp is the output of `qemu-system-x86_64 -netdev help`
-	// e.g. "Available netdev backend types:\nsocket\nhubport\ntap\nuser\nvde\nbridge\vhost-user\n"
-	// Not machine-readable, but checking strings.Contains() should be fine.
-	NetdevHelp []byte
-	// MachineHelp is the output of `qemu-system-x86_64 -machine help`
-	// e.g. "Supported machines are:\nakita...\n...virt-6.2...\n...virt-7.0...\n...\n"
-	// Not machine-readable, but checking strings.Contains() should be fine.
-	MachineHelp []byte
-	// CPUHelp is the output of `qemu-system-x86_64 -cpu help`
-	// e.g. "Available CPUs:\n...\nx86 base...\nx86 host...\n...\n"
-	// Not machine-readable, but checking strings.Contains() should be fine.
-	CPUHelp []byte
-}
-
-func inspectFeatures(ctx context.Context, exe, machine string) (*features, error) {
-	var (
-		f      features
-		stdout bytes.Buffer
-		stderr bytes.Buffer
-	)
-	cmd := exec.CommandContext(ctx, exe, "-M", "none", "-accel", "help")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("failed to run %v: stdout=%q, stderr=%q", cmd.Args, stdout.String(), stderr.String())
-	}
-	f.AccelHelp = stdout.Bytes()
-	// on older versions qemu will write "help" output to stderr
-	if len(f.AccelHelp) == 0 {
-		f.AccelHelp = stderr.Bytes()
-	}
-
-	cmd = exec.CommandContext(ctx, exe, "-M", "none", "-netdev", "help")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		logrus.Warnf("failed to run %v: stdout=%q, stderr=%q", cmd.Args, stdout.String(), stderr.String())
-	} else {
-		f.NetdevHelp = stdout.Bytes()
-		if len(f.NetdevHelp) == 0 {
-			f.NetdevHelp = stderr.Bytes()
-		}
-	}
-
-	cmd = exec.CommandContext(ctx, exe, "-machine", "help")
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		logrus.Warnf("failed to run %v: stdout=%q, stderr=%q", cmd.Args, stdout.String(), stderr.String())
-	} else {
-		f.MachineHelp = stdout.Bytes()
-		if len(f.MachineHelp) == 0 {
-			f.MachineHelp = stderr.Bytes()
-		}
-	}
-
-	// Avoid error: "No machine specified, and there is no default"
-	cmd = exec.CommandContext(ctx, exe, "-cpu", "help", "-machine", machine)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		logrus.Warnf("failed to run %v: stdout=%q, stderr=%q", cmd.Args, stdout.String(), stderr.String())
-	} else {
-		f.CPUHelp = stdout.Bytes()
-		if len(f.CPUHelp) == 0 {
-			f.CPUHelp = stderr.Bytes()
-		}
-	}
-
-	return &f, nil
-}
-
-// qemuMachine returns string to use for -machine.
-func qemuMachine(arch limatype.Arch) string {
-	if arch == limatype.X8664 {
-		return "q35"
-	}
-	return "virt"
-}
-
-// audioDevice returns the default audio device.
-func audioDevice() string {
-	switch runtime.GOOS {
-	case "darwin":
-		return "coreaudio"
-	case "linux":
-		return "pa" // pulseaudio
-	case "windows":
-		return "dsound"
-	}
-	return "oss"
-}
-
-func defaultCPUType() limatype.CPUType {
-	// x86_64 + TCG + max was previously unstable until 2021.
-	// https://bugzilla.redhat.com/show_bug.cgi?id=1999700
-	// https://bugs.launchpad.net/qemu/+bug/1748296
-	defaultX8664 := "max"
-	if runtime.GOOS == "windows" && runtime.GOARCH == "amd64" {
-		// https://github.com/lima-vm/lima/pull/3487#issuecomment-2846253560
-		// > #931 intentionally prevented the code from setting it to max when running on Windows,
-		// > and kept it at qemu64.
-		//
-		// TODO: remove this if "max" works with the latest qemu
-		defaultX8664 = "qemu64"
-	}
-	cpuType := map[limatype.Arch]string{
-		limatype.AARCH64: "max",
-		limatype.ARMV7L:  "max",
-		limatype.X8664:   defaultX8664,
-		limatype.PPC64LE: "max",
-		limatype.RISCV64: "max",
-		limatype.S390X:   "max",
-	}
-	for arch := range cpuType {
-		if limayaml.IsNativeArch(arch) && limayaml.IsAccelOS() {
-			if limayaml.HasHostCPU() {
-				cpuType[arch] = "host"
-			}
-		}
-		if arch == limatype.X8664 && runtime.GOOS == "darwin" {
-			// disable AVX-512, since it requires trapping instruction faults in guest
-			// Enterprise Linux requires either v2 (SSE4) or v3 (AVX2), but not yet v4.
-			cpuType[arch] += ",-avx512vl"
-
-			// Disable pdpe1gb on Intel Mac
-			// https://github.com/lima-vm/lima/issues/1485
-			// https://stackoverflow.com/a/72863744/5167443
-			cpuType[arch] += ",-pdpe1gb"
-		}
-	}
-	return cpuType
-}
-
-func resolveCPUType(y *limatype.LimaYAML) string {
-	cpuType := defaultCPUType()
-	var overrideCPUType bool
-	for k, v := range y.VMOpts.QEMU.CPUType {
-		if !slices.Contains(limatype.ArchTypes, *y.Arch) {
-			logrus.Warnf("field `vmOpts.qemu.cpuType` uses unsupported arch %q", k)
-			continue
-		}
-		if v != "" {
-			overrideCPUType = true
-			cpuType[k] = v
-		}
-	}
-	if overrideCPUType {
-		y.VMOpts.QEMU.CPUType = cpuType
-	}
-
-	return cpuType[*y.Arch]
-}
-
 func Cmdline(ctx context.Context, cfg Config) (exe string, args []string, err error) {
 	y := cfg.LimaYAML
 	exe, args, err = Exe(*y.Arch)
 	if err != nil {
 		return "", nil, err
-	}
-
-	features, err := inspectFeatures(ctx, exe, qemuMachine(*y.Arch))
-	if err != nil {
-		return "", nil, err
-	}
-
-	// Architecture
-	accel := Accel(*y.Arch)
-	if !strings.Contains(string(features.AccelHelp), accel) {
-		return "", nil, fmt.Errorf("accelerator %q is not supported by %s", accel, exe)
 	}
 
 	// Memory
@@ -316,47 +144,6 @@ func Cmdline(ctx context.Context, cfg Config) (exe string, args []string, err er
 		args = appendArgsIfNoConflict(args, "-object",
 			fmt.Sprintf("memory-backend-file,id=virtiofs-shm,size=%s,mem-path=/dev/shm,share=on", strconv.Itoa(int(memBytes))))
 		args = appendArgsIfNoConflict(args, "-numa", "node,memdev=virtiofs-shm")
-	}
-
-	// CPU
-	cpu := resolveCPUType(y)
-	args = appendArgsIfNoConflict(args, "-cpu", cpu)
-
-	// Machine
-	switch *y.Arch {
-	case limatype.X8664:
-		switch accel {
-		case "tcg":
-			// use q35 machine with vmware io port disabled.
-			args = appendArgsIfNoConflict(args, "-machine", "q35,vmport=off")
-			// use tcg accelerator with multi threading with 512MB translation block size
-			// https://qemu-project.gitlab.io/qemu/devel/multi-thread-tcg.html?highlight=tcg
-			// https://qemu-project.gitlab.io/qemu/system/invocation.html?highlight=tcg%20opts
-			// this will make sure each vCPU will be backed by 1 host user thread.
-			args = appendArgsIfNoConflict(args, "-accel", "tcg,thread=multi,tb-size=512")
-			// This will disable CPU S3/S4 state.
-			args = append(args, "-global", "ICH9-LPC.disable_s3=1")
-			args = append(args, "-global", "ICH9-LPC.disable_s4=1")
-		case "whpx":
-			// whpx: injection failed, MSI (0, 0) delivery: 0, dest_mode: 0, trigger mode: 0, vector: 0
-			args = appendArgsIfNoConflict(args, "-machine", "q35,accel="+accel+",kernel-irqchip=off")
-		default:
-			args = appendArgsIfNoConflict(args, "-machine", "q35,accel="+accel)
-		}
-	case limatype.AARCH64:
-		machine := "virt,accel=" + accel
-		args = appendArgsIfNoConflict(args, "-machine", machine)
-	case limatype.RISCV64:
-		// https://github.com/tianocore/edk2/blob/edk2-stable202408/OvmfPkg/RiscVVirt/README.md#test
-		// > Note: the `acpi=off` machine property is specified because Linux guest
-		// > support for ACPI (that is, the ACPI consumer side) is a work in progress.
-		// > Currently, `acpi=off` is recommended unless you are developing ACPI support
-		// > yourself.
-		machine := "virt,acpi=off,accel=" + accel
-		args = appendArgsIfNoConflict(args, "-machine", machine)
-	case limatype.ARMV7L:
-		machine := "virt,accel=" + accel
-		args = appendArgsIfNoConflict(args, "-machine", machine)
 	}
 
 	// SMP
@@ -765,22 +552,14 @@ func VirtiofsdCmdline(cfg Config, mountIndex int) ([]string, error) {
 
 // qemuArch returns the arch string used by qemu.
 func qemuArch(arch limatype.Arch) string {
-	switch arch {
-	case limatype.ARMV7L:
-		return "arm"
-	case limatype.PPC64LE:
-		return "ppc64"
-	default:
-		return arch
-	}
-}
-
-// qemuEdk2 returns the arch string used by `/usr/local/share/qemu/edk2-*-code.fd`.
-func qemuEdk2Arch(arch limatype.Arch) string {
-	if arch == limatype.RISCV64 {
-		return "riscv"
-	}
-	return qemuArch(arch)
+       switch arch {
+       case limatype.ARMV7L:
+               return "arm"
+       case limatype.PPC64LE:
+               return "ppc64"
+       default:
+               return arch
+       }
 }
 
 func Exe(arch limatype.Arch) (exe string, args []string, err error) {

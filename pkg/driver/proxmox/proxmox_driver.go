@@ -10,10 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	"github.com/luthermonson/go-proxmox"
 	"github.com/sirupsen/logrus"
@@ -121,38 +119,6 @@ func (l *LimaProxmoxDriver) Stop(ctx context.Context) error {
 
 func (l *LimaProxmoxDriver) GuestAgentConn(ctx context.Context) (net.Conn, string, error) {
 	return nil, "", nil
-}
-
-func waitFileExists(path string, timeout time.Duration) error {
-	startWaiting := time.Now()
-	for {
-		_, err := os.Stat(path)
-		if err == nil {
-			break
-		}
-		if !errors.Is(err, os.ErrNotExist) {
-			return err
-		}
-		if time.Since(startWaiting) > timeout {
-			return fmt.Errorf("timeout waiting for %s", path)
-		}
-		time.Sleep(500 * time.Millisecond)
-	}
-	return nil
-}
-
-func (l *LimaProxmoxDriver) killQEMU(_ context.Context, _ time.Duration, qCmd *exec.Cmd, qWaitCh <-chan error) error {
-	var qWaitErr error
-	if qCmd.ProcessState == nil {
-		if killErr := qCmd.Process.Kill(); killErr != nil {
-			logrus.WithError(killErr).Warn("failed to kill QEMU")
-		}
-		qWaitErr = <-qWaitCh
-		logrus.WithError(qWaitErr).Info("QEMU has exited, after killing forcibly")
-	} else {
-		logrus.Info("QEMU has already exited")
-	}
-	return qWaitErr
 }
 
 func logPipeRoutine(r io.Reader, header string) {
