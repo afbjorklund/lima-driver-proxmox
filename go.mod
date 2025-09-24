@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/docker/go-units v0.5.0
-	github.com/lima-vm/lima/v2 v2.0.0-alpha.0
+	github.com/lima-vm/lima/v2 v2.0.0-alpha.1
 	github.com/luthermonson/go-proxmox v0.2.2
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
@@ -49,7 +49,7 @@ require (
 	github.com/mdlayher/socket v0.5.1 // indirect
 	github.com/mdlayher/vsock v1.2.1 // indirect
 	github.com/miekg/dns v1.1.68 // indirect
-	github.com/mikefarah/yq/v4 v4.47.1 // indirect
+	github.com/mikefarah/yq/v4 v4.47.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
@@ -61,17 +61,17 @@ require (
 	github.com/u-root/uio v0.0.0-20240224005618-d2acac8f3701 // indirect
 	github.com/yuin/gopher-lua v1.1.1 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/mod v0.27.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
-	golang.org/x/tools v0.35.0 // indirect
+	golang.org/x/tools v0.36.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
-	google.golang.org/grpc v1.75.0 // indirect
-	google.golang.org/protobuf v1.36.8 // indirect
+	google.golang.org/grpc v1.75.1 // indirect
+	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/op/go-logging.v1 v1.0.0-20160211212156-b2cb9fa56473 // indirect
 	gvisor.dev/gvisor v0.0.0-20240916094835-a174eb65023f // indirect
 )
