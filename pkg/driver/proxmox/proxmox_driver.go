@@ -73,6 +73,14 @@ func (l *LimaProxmoxDriver) FillConfig(ctx context.Context, cfg *limatype.LimaYA
 	return validateConfig(ctx, cfg)
 }
 
+func (l *LimaProxmoxDriver) BootScripts() (map[string][]byte, error) {
+	return nil, nil
+}
+
+func (l *LimaProxmoxDriver) CreateDisk(_ context.Context) error {
+	return nil
+}
+
 func (l *LimaProxmoxDriver) Start(_ context.Context) (chan error, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer func() {
@@ -152,56 +160,8 @@ func (l *LimaProxmoxDriver) InspectStatus(_ context.Context, _ *limatype.Instanc
 	return ""
 }
 
-func (l *LimaProxmoxDriver) Create(_ context.Context) error {
-	return nil
-}
-
-func (l *LimaProxmoxDriver) Delete(_ context.Context) error {
-	return nil
-}
-
-func (l *LimaProxmoxDriver) BootScripts() (map[string][]byte, error) {
-	return nil, nil
-}
-
-func (l *LimaProxmoxDriver) CreateDisk(_ context.Context) error {
-	return nil
-}
-
 func (l *LimaProxmoxDriver) RunGUI() error {
 	return nil
-}
-
-func (l *LimaProxmoxDriver) Register(_ context.Context) error {
-	return nil
-}
-
-func (l *LimaProxmoxDriver) Unregister(_ context.Context) error {
-	return nil
-}
-
-func (l *LimaProxmoxDriver) ChangeDisplayPassword(_ context.Context, _ string) error {
-	return nil
-}
-
-func (l *LimaProxmoxDriver) DisplayConnection(_ context.Context) (string, error) {
-	return "", nil
-}
-
-func (l *LimaProxmoxDriver) CreateSnapshot(_ context.Context, _ string) error {
-	return errUnimplemented
-}
-
-func (l *LimaProxmoxDriver) ApplySnapshot(_ context.Context, _ string) error {
-	return errUnimplemented
-}
-
-func (l *LimaProxmoxDriver) DeleteSnapshot(_ context.Context, _ string) error {
-	return errUnimplemented
-}
-
-func (l *LimaProxmoxDriver) ListSnapshots(_ context.Context) (string, error) {
-	return "", errUnimplemented
 }
 
 func (l *LimaProxmoxDriver) ForwardGuestAgent() bool {
