@@ -152,10 +152,6 @@ func (l *LimaProxmoxDriver) InspectStatus(_ context.Context, _ *limatype.Instanc
 	return ""
 }
 
-func (l *LimaProxmoxDriver) Initialize(_ context.Context) error {
-	return nil
-}
-
 func (l *LimaProxmoxDriver) Create(_ context.Context) error {
 	return nil
 }
