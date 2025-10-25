@@ -55,7 +55,7 @@ func (l *LimaProxmoxDriver) Validate(ctx context.Context) error {
 	return validateConfig(ctx, l.Instance.Config)
 }
 
-func validateConfig(ctx context.Context, cfg *limatype.LimaYAML) error {
+func validateConfig(_ context.Context, cfg *limatype.LimaYAML) error {
 	if cfg == nil {
 		return errors.New("configuration is nil")
 	}
@@ -65,11 +65,14 @@ func validateConfig(ctx context.Context, cfg *limatype.LimaYAML) error {
 	}
 	return nil
 }
-func (l *LimaProxmoxDriver) FillConfig(ctx context.Context, cfg *limatype.LimaYAML, filePath string) error {
+
+func (l *LimaProxmoxDriver) FillConfig(ctx context.Context, cfg *limatype.LimaYAML, _ string) error {
 	if cfg.VMType == nil {
 		cfg.VMType = ptr.Of("proxmox")
 	}
-
+	if cfg.MountType == nil {
+		cfg.MountType = ptr.Of(limatype.REVSSHFS)
+	}
 	return validateConfig(ctx, cfg)
 }
 
@@ -112,6 +115,7 @@ func (l *LimaProxmoxDriver) Start(_ context.Context) (chan error, error) {
 	go logPipeRoutine(qStderr, "proxmox[stderr]")
 
 	logrus.Infof("Starting QEMU (hint: to watch the boot progress, see %q)", filepath.Join(qCfg.InstanceDir, "serial*.log"))
+	logrus.Debugf("qCmd.Args: %v", qCmd.Args)
 	if err := qCmd.Start(); err != nil {
 		return nil, err
 	}
@@ -121,11 +125,11 @@ func (l *LimaProxmoxDriver) Start(_ context.Context) (chan error, error) {
 	return l.qWaitCh, nil
 }
 
-func (l *LimaProxmoxDriver) Stop(ctx context.Context) error {
+func (l *LimaProxmoxDriver) Stop(_ context.Context) error {
 	return errUnimplemented
 }
 
-func (l *LimaProxmoxDriver) GuestAgentConn(ctx context.Context) (net.Conn, string, error) {
+func (l *LimaProxmoxDriver) GuestAgentConn(_ context.Context) (net.Conn, string, error) {
 	return nil, "", nil
 }
 

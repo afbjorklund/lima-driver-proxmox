@@ -126,6 +126,7 @@ func appendArgsIfNoConflict(args []string, k, v string) []string {
 	return append(args, k, v)
 }
 
+//nolint:gocyclo
 func Cmdline(ctx context.Context, cfg Config) (exe string, args []string, err error) {
 	y := cfg.LimaYAML
 	exe, args, err = Exe(*y.Arch)
@@ -552,14 +553,14 @@ func VirtiofsdCmdline(cfg Config, mountIndex int) ([]string, error) {
 
 // qemuArch returns the arch string used by qemu.
 func qemuArch(arch limatype.Arch) string {
-       switch arch {
-       case limatype.ARMV7L:
-               return "arm"
-       case limatype.PPC64LE:
-               return "ppc64"
-       default:
-               return arch
-       }
+	switch arch {
+	case limatype.ARMV7L:
+		return "arm"
+	case limatype.PPC64LE:
+		return "ppc64"
+	default:
+		return arch
+	}
 }
 
 func Exe(arch limatype.Arch) (exe string, args []string, err error) {
