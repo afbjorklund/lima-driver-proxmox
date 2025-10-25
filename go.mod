@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/docker/go-units v0.5.0
-	github.com/lima-vm/lima/v2 v2.0.0-alpha.1
+	github.com/lima-vm/lima/v2 v2.0.0-alpha.2
 	github.com/luthermonson/go-proxmox v0.2.2
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af
@@ -71,7 +71,7 @@ require (
 	golang.org/x/tools v0.36.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/grpc v1.75.1 // indirect
-	google.golang.org/protobuf v1.36.9 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/op/go-logging.v1 v1.0.0-20160211212156-b2cb9fa56473 // indirect
 	gvisor.dev/gvisor v0.0.0-20240916094835-a174eb65023f // indirect
 )

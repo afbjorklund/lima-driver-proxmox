@@ -92,8 +92,8 @@ github.com/klauspost/compress v1.17.4 h1:Ej5ixsIri7BrIjBkRZLTo6ghwrEtHFk7ijlczPW
 github.com/klauspost/compress v1.17.4/go.mod h1:/dCuZOvVtNoHsyb+cuJD3itjs3NbnF6KH9zAO4BDxPM=
 github.com/lima-vm/go-qcow2reader v0.6.0 h1:dNstUGQxEUPbmiiVnu/cek2x7scrHe2VJy5JseLLflo=
 github.com/lima-vm/go-qcow2reader v0.6.0/go.mod h1:ay45SlGOzU+2Vc21g5/lmQgPn7Hmf0JpPhm8cuOK1FI=
-github.com/lima-vm/lima/v2 v2.0.0-alpha.1 h1:5cBFSWCJm3wFmMHzJGbN+Q4OE318mfNf8QIh0fb3EJU=
-github.com/lima-vm/lima/v2 v2.0.0-alpha.1/go.mod h1:qYJiCFqtX+XjBziNCBdDylOC7YXTMWa+X6PP+g7tnaQ=
+github.com/lima-vm/lima/v2 v2.0.0-alpha.2 h1:KVLhdjl/rJkfskbwcEJiQenEER37Mzavzkz7heNlBCY=
+github.com/lima-vm/lima/v2 v2.0.0-alpha.2/go.mod h1:tRFqJtrxTozXE3l1mUb4MwlwXRDmBxMod23sqdxeqIc=
 github.com/linuxkit/virtsock v0.0.0-20220523201153-1a23e78aa7a2 h1:DZMFueDbfz6PNc1GwDRA8+6lBx1TB9UnxDQliCqR73Y=
 github.com/linuxkit/virtsock v0.0.0-20220523201153-1a23e78aa7a2/go.mod h1:SWzULI85WerrFt3u+nIm5F9l7EvxZTKQvd0InF3nmgM=
 github.com/luthermonson/go-proxmox v0.2.2 h1:BZ7VEj302wxw2i/EwTcyEiBzQib8teocB2SSkLHyySY=
@@ -216,8 +216,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7/go.mod h1:qQ0YXyHHx3XkvlzUtpXDkS29lDSafHMZBAZDc03LQ3A=
 google.golang.org/grpc v1.75.1 h1:/ODCNEuf9VghjgO3rqLcfg8fiOP0nSluljWFlDxELLI=
 google.golang.org/grpc v1.75.1/go.mod h1:JtPAzKiq4v1xcAB2hydNlWI2RnF85XXcV0mhKXr2ecQ=
-google.golang.org/protobuf v1.36.9 h1:w2gp2mA27hUeUzj9Ex9FBjsBm40zfaDtEWow293U7Iw=
-google.golang.org/protobuf v1.36.9/go.mod h1:fuxRtAxBytpl4zzqUh6/eyUujkJdNiuEkXntxiD/uRU=
+google.golang.org/protobuf v1.36.10 h1:AYd7cD/uASjIL6Q9LiTjz8JLcrh/88q5UObnmY3aOOE=
+google.golang.org/protobuf v1.36.10/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/op/go-logging.v1 v1.0.0-20160211212156-b2cb9fa56473 h1:6D+BvnJ/j6e222UW8s2qTSe3wGBtvo0MbVQG/c5k8RE=
