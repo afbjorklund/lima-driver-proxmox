@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/docker/go-units v0.5.0
-	github.com/lima-vm/lima/v2 v2.0.0-beta.0
+	github.com/lima-vm/lima/v2 v2.0.0-beta.0.0.20251030014236-26232758034a
 	github.com/luthermonson/go-proxmox v0.2.2
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/sirupsen/logrus v1.9.4-0.20230606125235-dd1b4c2e81af

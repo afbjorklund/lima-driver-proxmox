@@ -212,3 +212,7 @@ func (l *LimaProxmoxDriver) ForwardGuestAgent() bool {
 	// if driver is not providing, use host agent
 	return true
 }
+
+func (l *LimaProxmoxDriver) AdditionalSetupForSSH(_ context.Context) error {
+	return nil
+}

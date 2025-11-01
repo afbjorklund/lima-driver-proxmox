@@ -92,8 +92,8 @@ github.com/klauspost/compress v1.17.4 h1:Ej5ixsIri7BrIjBkRZLTo6ghwrEtHFk7ijlczPW
 github.com/klauspost/compress v1.17.4/go.mod h1:/dCuZOvVtNoHsyb+cuJD3itjs3NbnF6KH9zAO4BDxPM=
 github.com/lima-vm/go-qcow2reader v0.6.0 h1:dNstUGQxEUPbmiiVnu/cek2x7scrHe2VJy5JseLLflo=
 github.com/lima-vm/go-qcow2reader v0.6.0/go.mod h1:ay45SlGOzU+2Vc21g5/lmQgPn7Hmf0JpPhm8cuOK1FI=
-github.com/lima-vm/lima/v2 v2.0.0-beta.0 h1:nzJOpa2qOCji78NYlyhEhSfHp4YymOap+VXXff7czXo=
-github.com/lima-vm/lima/v2 v2.0.0-beta.0/go.mod h1:2aUm5PuG4m0aRpTx0W/+6GSjq2IPU8B6zTnQ8h/AN0w=
+github.com/lima-vm/lima/v2 v2.0.0-beta.0.0.20251030014236-26232758034a h1:jkm1264XjQfXWg/dmFeSq9vUBJB7CcWvGQlYPz2wHQg=
+github.com/lima-vm/lima/v2 v2.0.0-beta.0.0.20251030014236-26232758034a/go.mod h1:2aUm5PuG4m0aRpTx0W/+6GSjq2IPU8B6zTnQ8h/AN0w=
 github.com/linuxkit/virtsock v0.0.0-20220523201153-1a23e78aa7a2 h1:DZMFueDbfz6PNc1GwDRA8+6lBx1TB9UnxDQliCqR73Y=
 github.com/linuxkit/virtsock v0.0.0-20220523201153-1a23e78aa7a2/go.mod h1:SWzULI85WerrFt3u+nIm5F9l7EvxZTKQvd0InF3nmgM=
 github.com/luthermonson/go-proxmox v0.2.2 h1:BZ7VEj302wxw2i/EwTcyEiBzQib8teocB2SSkLHyySY=
